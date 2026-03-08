@@ -132,17 +132,27 @@ textarea,input{font-family:var(--font);}
 .prog-label{display:flex;justify-content:space-between;font-size:11px;opacity:.8;margin-bottom:5px;}
 .prog-bar{height:6px;background:rgba(255,255,255,.25);border-radius:3px;}
 .prog-fill{height:100%;background:#fff;border-radius:3px;transition:width .5s;}
-.tab-bar{display:flex;background:#fff;border-bottom:1px solid var(--slate-100);flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
-.tab-bar::-webkit-scrollbar{display:none;}
-.tab-btn{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 14px;border:none;background:transparent;border-bottom:2px solid transparent;transition:all .2s;cursor:pointer;}
-.tab-btn.active{border-bottom-color:var(--blue-600);}
-.tab-btn .ti{font-size:18px;}
-.tab-btn .tl{font-size:9px;font-weight:700;color:var(--slate-400);}
-.tab-btn.active .tl{color:var(--blue-600);}
-.tab-content{display:none;flex:1;overflow-y:auto;padding-bottom:20px;}
+.bottom-nav{
+  display:flex;position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;
+  background:rgba(255,255,255,0.97);
+  border-top:1px solid var(--slate-100);
+  box-shadow:0 -4px 20px rgba(0,0,0,0.08);
+  z-index:100;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.bnav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:8px 2px 10px;border:none;background:transparent;
+  cursor:pointer;transition:all .2s;font-family:inherit;
+  -webkit-tap-highlight-color:transparent;
+}
+.bnav-btn.active .bnav-icon{transform:scale(1.15);}
+.bnav-btn.active .bnav-label{color:var(--blue-600);font-weight:700;}
+.bnav-icon{font-size:20px;line-height:1;transition:transform .2s;}
+.bnav-label{font-size:10px;font-weight:500;color:var(--slate-400);letter-spacing:-0.2px;}
+.tab-content{display:none;flex:1;overflow-y:auto;padding-bottom:80px;}
 .tab-content.active{display:block;}
-
-/* ── 공지 ── */
 .notice-hero{background:linear-gradient(135deg,#0F172A,#1E3A8A);padding:20px;color:#fff;margin-bottom:16px;}
 .notice-hero h3{font-size:17px;font-weight:800;}
 .notice-hero p{font-size:12px;opacity:.7;margin-top:4px;}
@@ -495,19 +505,11 @@ textarea,input{font-family:var(--font);}
     </div>
     <div class="prog-bar-wrap">
       <div class="prog-label">
-        <span>온보딩 달성률</span>
+        <span>온보딩 여정</span>
         <span id="progPct">0%</span>
       </div>
       <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
     </div>
-  </div>
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="switchTab('notice',this)"><span class="ti">📢</span><span class="tl">공지</span></button>
-    <button class="tab-btn" onclick="switchTab('schedule',this)"><span class="ti">📅</span><span class="tl">일정</span></button>
-    <button class="tab-btn" onclick="switchTab('todo',this)"><span class="ti">✅</span><span class="tl">할일</span></button>
-    <button class="tab-btn" onclick="switchTab('quest',this)"><span class="ti">🎯</span><span class="tl">퀘스트</span></button>
-    <button class="tab-btn" onclick="switchTab('community',this)"><span class="ti">💬</span><span class="tl">소통방</span></button>
-    <button class="tab-btn" onclick="switchTab('ranking',this)"><span class="ti">🏆</span><span class="tl">랭킹</span></button>
   </div>
 
   <!-- 공지 탭 -->
@@ -671,6 +673,15 @@ textarea,input{font-family:var(--font);}
       <button class="sheet-btn" onclick="saveAvatar()">저장하기</button>
     </div>
   </div>
+
+  <nav class="bottom-nav">
+    <button class="bnav-btn active" onclick="switchTab('notice',this)"><span class="bnav-icon">📢</span><span class="bnav-label">공지</span></button>
+    <button class="bnav-btn" onclick="switchTab('schedule',this)"><span class="bnav-icon">📅</span><span class="bnav-label">일정</span></button>
+    <button class="bnav-btn" onclick="switchTab('todo',this)"><span class="bnav-icon">✅</span><span class="bnav-label">할일</span></button>
+    <button class="bnav-btn" onclick="switchTab('quest',this)"><span class="bnav-icon">🎯</span><span class="bnav-label">퀘스트</span></button>
+    <button class="bnav-btn" onclick="switchTab('community',this)"><span class="bnav-icon">💬</span><span class="bnav-label">소통방</span></button>
+    <button class="bnav-btn" onclick="switchTab('ranking',this)"><span class="bnav-icon">🏆</span><span class="bnav-label">랭킹</span></button>
+  </nav>
 </div>
 
 <!-- QUIZ SCREEN -->
@@ -896,7 +907,7 @@ function tryLogin(){
 
 // ── TAB ────────────────────────────────────────────────────
 function switchTab(tab,el){
-  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.bnav-btn').forEach(function(b){b.classList.remove('active');});
   document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active');});
   el.classList.add('active');
   document.getElementById('tab-'+tab).classList.add('active');
@@ -1010,7 +1021,10 @@ function toggleTodo(id){
   var t=S.todos.find(function(t){return t.id===id;});
   if(!t) return;
   t.done=!t.done;
-  if(t.done) addScore('todo',3);
+  if(t.done){
+    addScore('todo',3);
+    showCeleb('✅','할일 완료!','"'+t.text+'" 완료! +3점');
+  }
   renderTodos(); updateProg();
 }
 function delTodo(id){
