@@ -112,6 +112,24 @@ textarea,input{font-family:var(--font);}
 .survey-bar-label{display:flex;justify-content:space-between;font-size:12px;color:var(--slate-500);margin-bottom:3px;}
 .survey-bar{height:8px;background:var(--slate-100);border-radius:4px;overflow:hidden;}
 .survey-bar-fill{height:100%;background:var(--blue-500);border-radius:4px;transition:width .5s;}
+/* ── 사용자 설문 탭 ── */
+.user-survey-empty{text-align:center;padding:48px 20px;color:var(--slate-400);}
+.user-survey-empty-icon{font-size:40px;margin-bottom:10px;}
+.user-survey-card{background:#fff;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow);}
+.user-survey-badge{display:inline-flex;align-items:center;gap:5px;background:#EFF6FF;color:var(--blue-600);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
+.user-survey-title{font-size:15px;font-weight:700;color:var(--dark);margin-bottom:14px;line-height:1.4;}
+.survey-opt-btn{width:100%;padding:11px 14px;margin-bottom:8px;border-radius:10px;border:1.5px solid var(--slate-200);background:#fff;font-size:13px;font-weight:500;color:var(--dark);text-align:left;cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;gap:8px;}
+.survey-opt-btn.selected{border-color:var(--blue-600);background:#EFF6FF;color:#1D4ED8;}
+.survey-opt-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--slate-300);flex-shrink:0;transition:all .2s;background:#fff;}
+.survey-opt-btn.selected .survey-opt-radio{border-color:var(--blue-600);background:var(--blue-600);}
+.survey-submit-btn{width:100%;padding:12px;background:var(--blue-600);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;font-family:inherit;transition:background .2s;}
+.survey-submit-btn:disabled{background:var(--slate-300);cursor:default;}
+.survey-done-box{text-align:center;padding:18px 0 6px;color:var(--slate-500);font-size:13px;}
+.survey-done-icon{font-size:28px;margin-bottom:6px;}
+.survey-result-bar-wrap{margin-top:14px;border-top:1px solid var(--slate-100);padding-top:12px;}
+.survey-result-label{display:flex;justify-content:space-between;font-size:12px;color:var(--slate-500);margin-bottom:3px;}
+.survey-result-bar{height:8px;background:var(--slate-100);border-radius:4px;overflow:hidden;margin-bottom:7px;}
+.survey-result-fill{height:100%;background:#60A5FA;border-radius:4px;transition:width .5s;}
 .csv-btn{padding:8px 14px;background:var(--slate-100);color:var(--slate-600);border:none;border-radius:8px;font-size:12px;font-weight:600;}
 .alert-form{background:#fff;border-radius:14px;padding:16px;box-shadow:var(--shadow);}
 .alert-target-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
@@ -595,7 +613,7 @@ textarea,input{font-family:var(--font);}
         <div class="manner-email-box">
           <div class="manner-email-tag">📧 실전 이메일 예시</div>
           <div class="manner-email-meta">
-            <span class="manner-from">발신: 영업팀 홍길동 과장 (hong@company.com)</span>
+            <span class="manner-from">발신: 영업팀 홍길동 과장 (<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="cca4a3a2ab8cafa3a1bcada2b5e2afa3a1">[email&#160;protected]</a>)</span>
             <span class="manner-to">수신: 신입사원 여러분</span>
           </div>
           <div class="manner-email-subject">제목: [업무 요청] 거래처 방문 보고서 초안 작성 요청</div>
@@ -654,6 +672,15 @@ textarea,input{font-family:var(--font);}
     <div class="rank-list" id="rankList"></div>
   </div>
 
+  <!-- 설문 탭 -->
+  <div id="tab-survey" class="tab-content">
+    <div style="padding:16px 16px 6px;">
+      <div style="font-size:17px;font-weight:800;color:var(--dark);margin-bottom:2px;">📋 설문조사</div>
+      <div style="font-size:12px;color:var(--slate-400);">참여하고 온보딩을 함께 만들어가요</div>
+    </div>
+    <div id="userSurveyList" style="padding:0 16px 16px;"></div>
+  </div>
+
   <!-- 할일 오버레이 (app 내부) -->
   <div class="overlay" id="todoOverlay" onclick="closeTodoOut(event)">
     <div class="sheet">
@@ -681,6 +708,7 @@ textarea,input{font-family:var(--font);}
     <button class="bnav-btn" onclick="switchTab('quest',this)"><span class="bnav-icon">🎯</span><span class="bnav-label">퀘스트</span></button>
     <button class="bnav-btn" onclick="switchTab('community',this)"><span class="bnav-icon">💬</span><span class="bnav-label">소통방</span></button>
     <button class="bnav-btn" onclick="switchTab('ranking',this)"><span class="bnav-icon">🏆</span><span class="bnav-label">랭킹</span></button>
+    <button class="bnav-btn" onclick="switchTab('survey',this)"><span class="bnav-icon">📋</span><span class="bnav-label">설문</span></button>
   </nav>
 </div>
 
@@ -790,7 +818,7 @@ textarea,input{font-family:var(--font);}
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ── STATE ──────────────────────────────────────────────────
 var PASS='1111', ADMIN='9999';
 var pendingImg=null;
@@ -912,6 +940,7 @@ function switchTab(tab,el){
   el.classList.add('active');
   document.getElementById('tab-'+tab).classList.add('active');
   if(tab==='community') renderPosts();
+  if(tab==='survey') renderUserSurveys();
   if(tab==='ranking') renderRanking();
   if(tab==='quest') renderQuests();
 }
@@ -1537,6 +1566,68 @@ function renderSurveys(){
     +'</div>';
   }).join('');
 }
+// ── 사용자 설문 ──────────────────────────────────────────────
+var _surveyAnswers = {}; // {surveyId: optIndex} 선택 상태
+var _surveyDone = {};    // {surveyId: true} 제출 완료 상태
+
+function renderUserSurveys(){
+  var el = document.getElementById('userSurveyList');
+  if(!el) return;
+  var active = surveys.filter(function(sv){ return sv.active; });
+  if(!active.length){
+    el.innerHTML = '<div class="user-survey-empty"><div class="user-survey-empty-icon">📭</div><div style="font-size:14px;">현재 진행 중인 설문이 없어요</div><div style="font-size:12px;margin-top:4px;">관리자가 설문을 등록하면 여기에 표시돼요</div></div>';
+    return;
+  }
+  el.innerHTML = active.map(function(sv){
+    var done = _surveyDone[sv.id];
+    var total = sv.opts.reduce(function(s,o){return s+o.count;},0)||1;
+    var html = '<div class="user-survey-card">';
+    html += '<div class="user-survey-badge">📋 진행 중</div>';
+    html += '<div class="user-survey-title">'+sv.title+'</div>';
+    if(done){
+      html += '<div class="survey-done-box"><div class="survey-done-icon">✅</div>참여해주셔서 감사합니다!</div>';
+      html += '<div class="survey-result-bar-wrap">';
+      html += '<div style="font-size:11px;font-weight:700;color:var(--slate-500);margin-bottom:8px;">응답 현황</div>';
+      html += sv.opts.map(function(o){
+        var pct = Math.round(o.count/total*100);
+        var isMyAnswer = (_surveyAnswers[sv.id] !== undefined && sv.opts[_surveyAnswers[sv.id]] === o);
+        return '<div class="survey-result-label"><span>'+(isMyAnswer?'✓ ':'')+o.label+'</span><span>'+o.count+'명 ('+pct+'%)</span></div>'
+          +'<div class="survey-result-bar"><div class="survey-result-fill" style="width:'+pct+'%"></div></div>';
+      }).join('');
+      html += '</div>';
+    } else {
+      html += sv.opts.map(function(o, oi){
+        var sel = _surveyAnswers[sv.id] === oi;
+        return '<button class="survey-opt-btn'+(sel?' selected':'')+'" onclick="selectSurveyOpt('+sv.id+','+oi+')">'
+          +'<div class="survey-opt-radio"></div>'
+          +'<span>'+o.label+'</span>'
+          +'</button>';
+      }).join('');
+      var hasAnswer = _surveyAnswers[sv.id] !== undefined;
+      html += '<button class="survey-submit-btn"'+(hasAnswer?'':' disabled')+' onclick="submitSurveyAnswer('+sv.id+')">제출하기</button>';
+    }
+    html += '</div>';
+    return html;
+  }).join('');
+}
+
+function selectSurveyOpt(svId, optIdx){
+  _surveyAnswers[svId] = optIdx;
+  renderUserSurveys();
+}
+
+function submitSurveyAnswer(svId){
+  var optIdx = _surveyAnswers[svId];
+  if(optIdx === undefined) return;
+  var sv = surveys.find(function(s){return s.id===svId;});
+  if(!sv) return;
+  sv.opts[optIdx].count++;
+  _surveyDone[svId] = true;
+  renderUserSurveys();
+  // 관리자 설문 목록도 동기화
+  if(document.getElementById('surveyList')) renderSurveys();
+}
+
 function toggleSurvey(id){
   var sv=surveys.find(function(s){return s.id===id;});
   if(!sv) return;
@@ -1602,10 +1693,4 @@ function sendAlert(){
   function init(){resize();spawnAll();raf=requestAnimationFrame(draw);}
   window.addEventListener('resize',resize);
   var splashEl=document.getElementById('splash');
-  var obs=new MutationObserver(function(){if(splashEl.classList.contains('active')){if(!raf)init();}else{cancelAnimationFrame(raf);raf=null;}});
-  obs.observe(splashEl,{attributes:true,attributeFilter:['class']});
-  if(splashEl.classList.contains('active')) init();
-})();
-</script>
-</body>
-</html>
+  var obs=new MutationObserver(function(){if(splashEl.classList.contain
