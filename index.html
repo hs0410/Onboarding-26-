@@ -818,7 +818,7 @@ textarea,input{font-family:var(--font);}
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ── STATE ──────────────────────────────────────────────────
 var PASS='1111', ADMIN='9999';
 var pendingImg=null;
@@ -1693,4 +1693,19 @@ function sendAlert(){
   function init(){resize();spawnAll();raf=requestAnimationFrame(draw);}
   window.addEventListener('resize',resize);
   var splashEl=document.getElementById('splash');
-  var obs=new MutationObserver(function(){if(splashEl.classList.contain
+  var obs=new MutationObserver(()=>{
+    if(splashEl.classList.contains('active')){
+      if(!raf) init();
+    } else {
+      cancelAnimationFrame(raf); raf=null;
+    }
+  });
+  obs.observe(splashEl,{attributes:true,attributeFilter:['class']});
+  if(splashEl.classList.contains('active')) init();
+})();
+
+go('splash');
+</script>
+
+</body>
+</html>
