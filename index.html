@@ -424,7 +424,45 @@ body{font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;b
 .img-preview img{width:100%;border-radius:10px;max-height:180px;object-fit:cover}
 .img-preview-del{position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.5);border:none;border-radius:50%;width:24px;height:24px;color:white;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 
-/* ── RANKING ── */
+/* ── ADMIN TABS ── */
+.admin-tabs{display:flex;gap:0;background:rgba(255,255,255,0.08);border-radius:var(--r-sm);padding:4px;margin:14px 20px 0;position:relative;z-index:1}
+.admin-tab-btn{flex:1;padding:8px 4px;border:none;background:none;border-radius:8px;font-size:11px;font-weight:700;color:rgba(255,255,255,0.55);cursor:pointer;transition:all 0.2s;white-space:nowrap}
+.admin-tab-btn.on{background:white;color:var(--violet-700);box-shadow:0 2px 8px rgba(0,0,0,0.12)}
+
+/* ── SURVEY ── */
+.survey-card{background:var(--white);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--shadow-sm);border:1px solid var(--slate-100)}
+.survey-card-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.survey-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.survey-title{font-size:14px;font-weight:800;letter-spacing:-0.2px;flex:1}
+.survey-cnt{font-size:11px;color:var(--slate-400);font-weight:600;margin-top:2px}
+.survey-toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.survey-toggle input{opacity:0;width:0;height:0}
+.survey-toggle-slider{position:absolute;inset:0;border-radius:100px;background:var(--slate-200);cursor:pointer;transition:0.3s}
+.survey-toggle-slider::before{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:white;left:3px;top:3px;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2)}
+.survey-toggle input:checked+.survey-toggle-slider{background:var(--emerald-500)}
+.survey-toggle input:checked+.survey-toggle-slider::before{transform:translateX(20px)}
+.survey-responses{border-top:1px solid var(--slate-100);padding-top:10px;margin-top:10px}
+.survey-response-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--slate-50)}
+.survey-bar-wrap{flex:1;background:var(--slate-100);border-radius:100px;height:6px;overflow:hidden}
+.survey-bar-fill{height:100%;border-radius:100px;background:var(--blue-500);transition:width 0.4s}
+.survey-export-btn{width:100%;margin-top:10px;background:var(--emerald-500);color:white;border:none;border-radius:var(--r-sm);padding:11px;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.add-survey-btn{width:100%;background:var(--slate-50);border:1.5px dashed var(--slate-200);border-radius:var(--r);padding:14px;color:var(--slate-400);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px}
+.add-survey-btn:hover{border-color:var(--violet-500);color:var(--violet-500)}
+
+/* ── PUSH ALERT ── */
+.alert-compose{background:var(--white);border-radius:var(--r);padding:16px;box-shadow:var(--shadow-sm);border:1px solid var(--slate-100);margin-bottom:14px}
+.alert-target-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.alert-target-btn{padding:6px 12px;border-radius:100px;border:1.5px solid var(--slate-200);background:transparent;font-size:11px;font-weight:700;cursor:pointer;color:var(--slate-500);transition:all 0.2s}
+.alert-target-btn.on{background:var(--violet-500);border-color:var(--violet-500);color:white}
+.alert-history{background:var(--white);border-radius:var(--r);padding:16px;box-shadow:var(--shadow-sm);border:1px solid var(--slate-100)}
+.alert-hist-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--slate-50)}
+.alert-hist-item:last-child{border-bottom:none}
+.alert-hist-icon{width:34px;height:34px;border-radius:10px;background:var(--violet-100);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.alert-hist-body{flex:1}
+.alert-hist-title{font-size:13px;font-weight:700;color:var(--slate-800)}
+.alert-hist-meta{font-size:11px;color:var(--slate-400);margin-top:2px}
+.alert-send-btn{width:100%;background:linear-gradient(135deg,var(--violet-500),var(--blue-500));color:white;border:none;border-radius:var(--r);padding:15px;font-size:15px;font-weight:800;cursor:pointer;margin-top:12px;box-shadow:0 6px 20px rgba(139,92,246,0.35);letter-spacing:-0.2px}
+
 .rank-hero{border-radius:var(--r);padding:18px 20px;margin-bottom:14px;background:linear-gradient(135deg,#78350F,#B45309,#F59E0B);position:relative;overflow:hidden}
 .rank-hero::before{content:'🏆';position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:56px;opacity:0.15}
 .rank-hero h3{font-size:17px;font-weight:800;color:white;letter-spacing:-0.3px;margin-bottom:4px;position:relative;z-index:1}
@@ -542,7 +580,13 @@ body{font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;b
   <div class="admin-hero">
     <button class="back-btn" onclick="go('splash')">← 나가기</button>
     <h1>🔧 관리자 대시보드</h1>
-    <p>공지 작성 · 퀴즈 관리 · 접속 코드 설정</p>
+    <p>공지 · 퀴즈 · 설문 · 알림 통합 관리</p>
+    <div class="admin-tabs">
+      <button class="admin-tab-btn on" onclick="switchAdminTab('notice',this)">📢 공지</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('quiz',this)">🧩 퀴즈</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('survey',this)">📋 설문</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('alert',this)">🔔 알림</button>
+    </div>
   </div>
   <div class="admin-body">
     <div class="code-panel">
@@ -554,23 +598,60 @@ body{font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;b
       <button class="code-change-btn" onclick="changeCode()">변경</button>
     </div>
 
-    <!-- 공지 작성 -->
-    <div class="notice-editor-card">
-      <div class="notice-editor-title">📢 공지사항 작성</div>
-      <div class="notice-type-row" id="noticeTypeRow">
-        <button class="notice-type-btn on" onclick="setNType('info',this)">📌 일반</button>
-        <button class="notice-type-btn" onclick="setNType('warn',this)">⚠️ 주의</button>
-        <button class="notice-type-btn" onclick="setNType('done',this)">✅ 완료</button>
-        <button class="notice-type-btn" onclick="setNType('event',this)">🎉 이벤트</button>
-        <button class="notice-type-btn" onclick="setNType('urgent',this)">🚨 긴급</button>
+    <!-- 관리자 탭: 공지 -->
+    <div id="admin-tab-notice" class="admin-tab-content">
+      <div class="notice-editor-card">
+        <div class="notice-editor-title">📢 공지사항 작성</div>
+        <div class="notice-type-row" id="noticeTypeRow">
+          <button class="notice-type-btn on" onclick="setNType('info',this)">📌 일반</button>
+          <button class="notice-type-btn" onclick="setNType('warn',this)">⚠️ 주의</button>
+          <button class="notice-type-btn" onclick="setNType('done',this)">✅ 완료</button>
+          <button class="notice-type-btn" onclick="setNType('event',this)">🎉 이벤트</button>
+          <button class="notice-type-btn" onclick="setNType('urgent',this)">🚨 긴급</button>
+        </div>
+        <input class="sf-input" id="nTitle" placeholder="공지 제목" style="margin-bottom:8px" />
+        <textarea class="sf-input" id="nBody" rows="3" placeholder="공지 내용을 입력하세요" style="resize:none"></textarea>
+        <button class="sf-save-btn" style="margin-top:10px" onclick="addNotice()">공지 등록</button>
+        <div class="notice-list-admin" id="adminNoticeList"></div>
       </div>
-      <input class="sf-input" id="nTitle" placeholder="공지 제목" style="margin-bottom:8px" />
-      <textarea class="sf-input" id="nBody" rows="3" placeholder="공지 내용을 입력하세요" style="resize:none"></textarea>
-      <button class="sf-save-btn" style="margin-top:10px" onclick="addNotice()">공지 등록</button>
-      <div class="notice-list-admin" id="adminNoticeList"></div>
     </div>
 
-    <div id="adminQuestList"></div>
+    <!-- 관리자 탭: 퀴즈 -->
+    <div id="admin-tab-quiz" class="admin-tab-content" style="display:none">
+      <div id="adminQuestList"></div>
+    </div>
+
+    <!-- 관리자 탭: 설문 -->
+    <div id="admin-tab-survey" class="admin-tab-content" style="display:none">
+      <div class="sec-hd"><div class="sec-title">📋 설문 관리</div></div>
+      <div id="surveyList"></div>
+      <button class="add-survey-btn" onclick="openAddSurvey()">＋ 새 설문 만들기</button>
+    </div>
+
+    <!-- 관리자 탭: 알림 -->
+    <div id="admin-tab-alert" class="admin-tab-content" style="display:none">
+      <div class="alert-compose">
+        <div class="notice-editor-title">🔔 푸시 알림 발송</div>
+        <label class="sf-label">발송 대상</label>
+        <div class="alert-target-row" id="alertTargetRow">
+          <button class="alert-target-btn on" onclick="setAlertTarget('all',this)">전체</button>
+          <button class="alert-target-btn" onclick="setAlertTarget('1',this)">1조</button>
+          <button class="alert-target-btn" onclick="setAlertTarget('2',this)">2조</button>
+          <button class="alert-target-btn" onclick="setAlertTarget('3',this)">3조</button>
+        </div>
+        <label class="sf-label">알림 제목</label>
+        <input class="sf-input" id="alertTitle" placeholder="예: 점심 메뉴 투표 마감 임박!" />
+        <label class="sf-label">알림 내용</label>
+        <textarea class="sf-input" id="alertBody" rows="2" placeholder="예: 오늘 12시까지 설문에 참여해주세요 🍱" style="resize:none;margin-top:4px"></textarea>
+        <button class="alert-send-btn" onclick="sendAlert()">🔔 알림 발송하기</button>
+      </div>
+      <div class="alert-history">
+        <div class="notice-editor-title">📬 발송 내역</div>
+        <div id="alertHistoryList">
+          <div class="empty"><div class="empty-icon">🔔</div><div class="empty-text">아직 발송한 알림이 없어요</div></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1375,73 +1456,143 @@ const DUMMY_POSTS = [];
 let posts = [...DUMMY_POSTS];
 let postIdSeq = 9005;
 
-function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
-function previewImg(e){
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=ev=>{
-    pendingImg=ev.target.result;
-    document.getElementById('imgPreviewSrc').src=pendingImg;
-    document.getElementById('imgPreview').style.display='block';
-  };
-  r.readAsDataURL(f);
+// ── ADMIN TAB SWITCH ───────────────────────────────────────
+function switchAdminTab(tab, btn){
+  document.querySelectorAll('.admin-tab-content').forEach(el=>el.style.display='none');
+  document.querySelectorAll('.admin-tab-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('admin-tab-'+tab).style.display='block';
+  btn.classList.add('on');
+  if(tab==='survey') renderSurveys();
+  if(tab==='alert') renderAlertHistory();
 }
-function removeImg(){pendingImg=null;document.getElementById('imgPreview').style.display='none';document.getElementById('imgInput').value='';}
-function submitPost(){
-  const txt=document.getElementById('postInput').value.trim();
-  if(!txt&&!pendingImg){alert('내용이나 사진을 입력해주세요.');return;}
-  const now=new Date();
-  const timeStr=(now.getHours()<12?'오전':'오후')+' '+((now.getHours()%12)||12)+':'+String(now.getMinutes()).padStart(2,'0');
-  posts.unshift({id:postIdSeq++,nick:S.nick||'나',team:S.team||'',avatar:S.avatar||'🐣',color:pickColor(S.nick),text:txt,img:pendingImg,likes:[],time:timeStr});
-  document.getElementById('postInput').value='';
-  document.getElementById('postInput').style.height='auto';
-  removeImg();
-  renderPosts();
-}
-function pickColor(nick){const colors=['#3B82F6','#10B981','#8B5CF6','#F59E0B','#EF4444','#EC4899','#F97316'];let h=0;for(const c of (nick||'?'))h+=c.charCodeAt(0);return colors[h%colors.length];}
-function toggleLike(id){
-  const p=posts.find(p=>p.id===id);if(!p)return;
-  const me=S.nick||'나';
-  const idx=p.likes.indexOf(me);
-  if(idx===-1)p.likes.push(me);else p.likes.splice(idx,1);
-  renderPosts();
-}
-function delPost(id){posts=posts.filter(p=>p.id!==id);renderPosts();}
-function renderPosts(){
-  document.getElementById('postCnt').textContent=posts.length+'개';
-  const me=S.nick||'나';
-  // 작성창 아바타
-  const ca=document.getElementById('composeAvatar');
-  if(ca){ca.textContent=S.avatar||'🐣';ca.style.background='var(--slate-100)';ca.style.fontSize='22px';}
-  if(!posts.length){
-    document.getElementById('postList').innerHTML='<div class="empty"><div class="empty-icon">💬</div><div class="empty-text">아직 게시물이 없어요<br>첫 한마디를 남겨보세요!</div></div>';
-    return;
-  }
-  document.getElementById('postList').innerHTML=posts.map(p=>{
-    const isMe=p.nick===(S.nick||'나');
-    const liked=p.likes.includes(S.nick||'나');
-    const avatarEl=p.avatar
-      ? `<div class="post-avatar" style="background:var(--slate-100);font-size:20px">${p.avatar}</div>`
-      : `<div class="post-avatar" style="background:${p.color}">${p.nick.charAt(0)}</div>`;
-    return `<div class="post-card">
-      <div class="post-header">
-        ${avatarEl}
-        <div class="post-meta">
-          <div class="post-name">${p.nick} ${isMe?'<span style="font-size:10px;color:var(--blue-500);font-weight:700">나</span>':''}</div>
-          <div class="post-time">${p.time}${p.team?' · '+p.team:''}</div>
+
+// ── SURVEY DATA ────────────────────────────────────────────
+let surveys = [
+  {id:1, icon:'🍱', title:'오늘 점심 메뉴 투표', type:'choice', active:true,
+   options:['한식','중식','일식','양식'], responses:{'한식':3,'중식':1,'일식':2,'양식':1}},
+  {id:2, icon:'😊', title:'1주차 온보딩 만족도', type:'scale', active:false,
+   options:['매우 불만족','불만족','보통','만족','매우 만족'], responses:{'매우 불만족':0,'불만족':1,'보통':2,'만족':4,'매우 만족':3}},
+  {id:3, icon:'🎯', title:'가장 유익했던 프로그램', type:'choice', active:false,
+   options:['팀빌딩','직무교육','선배 멘토링','현장 견학'], responses:{'팀빌딩':4,'직무교육':3,'선배 멘토링':2,'현장 견학':1}},
+];
+let surveyIdSeq = 4;
+
+function renderSurveys(){
+  const list = document.getElementById('surveyList');
+  if(!list) return;
+  list.innerHTML = surveys.map(sv => {
+    const total = Object.values(sv.responses).reduce((a,b)=>a+b, 0);
+    const maxVal = Math.max(...Object.values(sv.responses), 1);
+    return `<div class="survey-card">
+      <div class="survey-card-top">
+        <div class="survey-icon" style="background:${sv.active?'#ECFDF5':'#F8FAFC'}">${sv.icon}</div>
+        <div style="flex:1">
+          <div class="survey-title">${sv.title}</div>
+          <div class="survey-cnt">응답 ${total}명 · ${sv.active?'<span style="color:var(--emerald-600);font-weight:700">진행중</span>':'<span style="color:var(--slate-400)">종료</span>'}</div>
         </div>
-        ${p.team?`<div class="post-team-badge">${p.team}</div>`:''}
+        <label class="survey-toggle">
+          <input type="checkbox" ${sv.active?'checked':''} onchange="toggleSurvey(${sv.id},this.checked)">
+          <span class="survey-toggle-slider"></span>
+        </label>
       </div>
-      ${p.text?`<div class="post-text">${p.text}</div>`:''}
-      ${p.img?`<img class="post-img" src="${p.img}" alt="첨부이미지"/>`:''}
-      <div class="post-actions">
-        <button class="post-like-btn ${liked?'liked':''}" onclick="toggleLike(${p.id})">
-          ${liked?'❤️':'🤍'} ${p.likes.length>0?p.likes.length+'명 공감':'공감'}
-        </button>
-        ${isMe?`<button class="post-del-btn" onclick="delPost(${p.id})">삭제</button>`:''}
+      <div class="survey-responses">
+        ${sv.options.map(opt => {
+          const cnt = sv.responses[opt]||0;
+          const pct = total ? Math.round(cnt/total*100) : 0;
+          return `<div class="survey-response-item">
+            <div style="font-size:12px;font-weight:600;color:var(--slate-700);width:80px;flex-shrink:0">${opt}</div>
+            <div class="survey-bar-wrap"><div class="survey-bar-fill" style="width:${pct}%;background:${sv.active?'var(--emerald-500)':'var(--slate-300)'}"></div></div>
+            <div style="font-size:11px;font-weight:700;color:var(--slate-500);width:36px;text-align:right;flex-shrink:0">${pct}%</div>
+          </div>`;
+        }).join('')}
       </div>
+      <button class="survey-export-btn" onclick="exportSurvey(${sv.id})">📥 결과 내보내기 (CSV)</button>
     </div>`;
   }).join('');
+}
+
+function toggleSurvey(id, on){
+  const sv = surveys.find(s=>s.id===id);
+  if(sv){ sv.active = on; renderSurveys(); }
+}
+
+function openAddSurvey(){
+  const title = prompt('설문 제목을 입력하세요 (예: 오늘 저녁 메뉴 투표)');
+  if(!title) return;
+  const optsRaw = prompt('선택지를 쉼표로 구분해 입력하세요 (예: 한식,중식,일식)');
+  if(!optsRaw) return;
+  const opts = optsRaw.split(',').map(o=>o.trim()).filter(Boolean);
+  if(opts.length < 2){ alert('선택지는 최소 2개 이상이어야 해요'); return; }
+  const icons = ['📝','🍱','😊','🎯','⭐','🏆','💬','📊'];
+  const newSv = {
+    id: surveyIdSeq++,
+    icon: icons[Math.floor(Math.random()*icons.length)],
+    title, type:'choice', active:true,
+    options: opts,
+    responses: Object.fromEntries(opts.map(o=>[o,0]))
+  };
+  surveys.unshift(newSv);
+  renderSurveys();
+  showCeleb('📋','설문 생성 완료!',`"${title}" 설문이 신입사원에게 공개됐어요`);
+}
+
+function exportSurvey(id){
+  const sv = surveys.find(s=>s.id===id);
+  if(!sv) return;
+  const total = Object.values(sv.responses).reduce((a,b)=>a+b, 0);
+  let csv = `설문 제목,${sv.title}\n응답 총계,${total}명\n\n선택지,응답수,비율\n`;
+  sv.options.forEach(opt=>{
+    const cnt = sv.responses[opt]||0;
+    const pct = total ? Math.round(cnt/total*100) : 0;
+    csv += `${opt},${cnt},${pct}%\n`;
+  });
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `설문결과_${sv.title}.csv`; a.click();
+  URL.revokeObjectURL(url);
+  showCeleb('📥','내보내기 완료!','CSV 파일이 다운로드됐어요');
+}
+
+// ── ALERT / PUSH ───────────────────────────────────────────
+let alertTarget = 'all';
+let alertHistory = [];
+
+function setAlertTarget(target, btn){
+  alertTarget = target;
+  document.querySelectorAll('.alert-target-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+function sendAlert(){
+  const title = document.getElementById('alertTitle').value.trim();
+  const body = document.getElementById('alertBody').value.trim();
+  if(!title){ alert('알림 제목을 입력해주세요'); return; }
+  const targetLabel = alertTarget==='all'?'전체':alertTarget+'조';
+  const now = new Date();
+  const timeStr = (now.getHours()<12?'오전':'오후')+' '+((now.getHours()%12)||12)+':'+String(now.getMinutes()).padStart(2,'0');
+  alertHistory.unshift({title, body, target:targetLabel, time:timeStr});
+  document.getElementById('alertTitle').value='';
+  document.getElementById('alertBody').value='';
+  renderAlertHistory();
+  showCeleb('🔔','알림 발송 완료!',`${targetLabel} 대상으로 알림을 보냈어요`);
+}
+
+function renderAlertHistory(){
+  const list = document.getElementById('alertHistoryList');
+  if(!list) return;
+  if(!alertHistory.length){
+    list.innerHTML='<div class="empty"><div class="empty-icon">🔔</div><div class="empty-text">아직 발송한 알림이 없어요</div></div>';
+    return;
+  }
+  list.innerHTML = alertHistory.map(h=>`
+    <div class="alert-hist-item">
+      <div class="alert-hist-icon">🔔</div>
+      <div class="alert-hist-body">
+        <div class="alert-hist-title">${h.title}</div>
+        <div class="alert-hist-meta">${h.body||'내용 없음'} · ${h.target} · ${h.time}</div>
+      </div>
+    </div>`).join('');
 }
 
 // ── RANKING ────────────────────────────────────────────────
