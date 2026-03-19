@@ -180,6 +180,17 @@ body{font-family:var(--font);background:#f8fafc;color:var(--dark);max-width:430p
 .lego-info{padding:7px 8px;}
 .lego-info h4{font-size:11px;font-weight:700;margin-bottom:2px;}
 .lego-info p{font-size:10px;color:var(--gray-5);}
+/* 레고 업로드 영역 */
+.lego-upload-area{border:2px dashed var(--gray-3);border-radius:12px;padding:28px 16px;text-align:center;cursor:pointer;transition:all .2s;background:#fafafa;position:relative;margin-bottom:12px;}
+.lego-upload-area:active{background:var(--blue-l);border-color:var(--blue);}
+.lego-upload-area.has-img{border-color:var(--blue);border-style:solid;padding:0;overflow:hidden;background:#000;}
+.lego-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.lego-upload-icon{font-size:36px;margin-bottom:8px;}
+.lego-upload-txt{font-size:13px;font-weight:600;color:var(--gray-5);margin-bottom:4px;}
+.lego-upload-hint{font-size:11px;color:var(--gray-4);}
+.lego-preview-img{width:100%;max-height:220px;object-fit:cover;display:block;border-radius:10px;}
+.lego-change-btn{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);}
+.lego-img-remove{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 /* 소통 탭 */
 .talk-write{padding:14px;}
 .talk-write-box{background:#fff;border-radius:14px;padding:14px;box-shadow:var(--shadow);}
@@ -458,7 +469,11 @@ body{font-family:var(--font);background:#f8fafc;color:var(--dark);max-width:430p
 <div id="sessionSelect" class="screen">
   <div class="ss-hd">
     <h1>어디로 이동할까요?</h1><p>세션을 선택해 입장하세요</p>
-    <div class="ss-badge"><span id="ssAvatar">🐣</span><span id="ssUserInfo">닉네임 · 조</span></div>
+    <div class="ss-badge"><span id="ssAvatar">🐣</span><span id="ssUserInfo">닉네임 · 조</span>
+      <span title="Supabase 연결 상태" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:rgba(255,255,255,.5);margin-left:4px;">
+        <span id="sbStatusDot" style="width:7px;height:7px;border-radius:50%;background:#9ca3af;display:inline-block;"></span>DB
+      </span>
+    </div>
   </div>
   <div class="ss-cards">
     <div class="ss-card ss-card-comm" onclick="enterSession('comm')">
@@ -659,13 +674,27 @@ body{font-family:var(--font);background:#f8fafc;color:var(--dark);max-width:430p
     <button class="btn-p" onclick="saveSurvey()">설문 등록</button></div>
 </div>
 <div class="overlay" id="legoSheet" onclick="closeOverlay('legoSheet',event)">
-  <div class="sheet"><div class="sh-handle"></div><div class="sh-title">🧩 레고 팀빌딩 공유</div>
-    <div class="fld"><label class="fld-lbl">사진 첨부</label>
-      <input type="file" accept="image/*" id="legoImgInp" onchange="previewLegoImg(this)" style="font-size:13px;">
-      <div id="legoPreview" style="margin-top:7px;"></div></div>
-    <div class="fld"><label class="fld-lbl">한줄 소감</label>
-      <input class="fld-inp" id="legoComment" placeholder="레고 팀빌딩 소감을 남겨주세요!"></div>
-    <button class="btn-p" onclick="submitLego()">공유하기 📸</button></div>
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-title">🧩 레고 팀빌딩 공유</div>
+    <!-- 업로드 영역 -->
+    <div class="lego-upload-area" id="legoUploadArea" onclick="triggerLegoUpload()">
+      <input type="file" accept="image/*" id="legoImgInp" onchange="previewLegoImg(this)" style="display:none;">
+      <div id="legoUploadPlaceholder">
+        <div class="lego-upload-icon">📷</div>
+        <div class="lego-upload-txt">사진을 탭해서 업로드</div>
+        <div class="lego-upload-hint">JPG · PNG · HEIC 지원</div>
+      </div>
+      <img id="legoPreviewImg" class="lego-preview-img" style="display:none;" alt="미리보기">
+      <button class="lego-img-remove" id="legoRemoveBtn" style="display:none;" onclick="removeLegoImg(event)">✕</button>
+    </div>
+    <div style="font-size:11px;color:var(--gray-4);margin-bottom:12px;text-align:center;" id="legoImgStatus">사진을 선택하면 미리보기가 표시됩니다</div>
+    <div class="fld">
+      <label class="fld-lbl">한줄 소감 (선택)</label>
+      <input class="fld-inp" id="legoComment" placeholder="우리 조 레고 자랑해보세요! 🧩">
+    </div>
+    <button class="btn-p" id="legoSubmitBtn" onclick="submitLego()">공유하기 📸</button>
+  </div>
 </div>
 <!-- 퀘스트 인증 시트 -->
 <div class="overlay" id="questCertSheet" onclick="closeOverlay('questCertSheet',event)">
@@ -694,6 +723,36 @@ body{font-family:var(--font);background:#f8fafc;color:var(--dark);max-width:430p
 // ═══════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════
+// ══════════════════════════════════════
+// ★ SUPABASE 설정 — 아래 두 값을 교체하세요
+// ══════════════════════════════════════
+var SUPABASE_URL  = 'https://kmizygulzlgmqmelpzey.supabase.co'; // ← Project URL
+var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttaXp5Z3VsemxnbXFtZWxwemV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MTcyMDMsImV4cCI6MjA4OTQ5MzIwM30.fHzF6F5PAKbRJOtZLoQt4iBoLFzTw885z-qkHf7rugw';                    // ← anon/public key
+var sb = null; // Supabase 클라이언트 (SDK 로드 후 초기화)
+var SB_USER_ID = null; // 현재 사용자 DB row id
+
+function initSupabase() {
+  try {
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    console.log('[Supabase] 클라이언트 초기화 완료');
+    setSbStatus(true);
+  } catch(e) {
+    console.warn('[Supabase] 초기화 실패 — 로컬 모드로 동작합니다', e);
+    setSbStatus(false);
+  }
+}
+
+function setSbStatus(ok) {
+  var el = document.getElementById('sbStatusDot');
+  if(el) { el.style.background = ok ? '#10b981' : '#9ca3af'; el.title = ok ? 'Supabase 연결됨' : '로컬 모드'; }
+}
+
+// Supabase 호출 실패 시 조용히 로컬 폴백
+async function sbSafe(fn) {
+  if(!sb) return null;
+  try { return await fn(); } catch(e) { console.warn('[Supabase]', e.message); return null; }
+}
+
 var PASS='1111', ADMIN_CODE='9999';
 var nType='event', notifTarget='전체', svOptSeq=1, svIdSeq=10;
 var _selAv=null, legoPendingImg=null, legoSeq=1;
@@ -799,6 +858,15 @@ function tryLogin(){
   S.nick=nick;S.team=team||'전체';S.avatar='🐣';
   document.getElementById('ssAvatar').textContent=S.avatar;
   document.getElementById('ssUserInfo').textContent=nick+' · '+(team||'');
+  // ★ Supabase: 사용자 upsert (닉네임+조 기준)
+  sbSafe(async function(){
+    var res = await sb.from('users')
+      .upsert({nickname:nick, team:team||'전체', avatar:'🐣', score:S.score},
+              {onConflict:'nickname,team', ignoreDuplicates:false})
+      .select('id').single();
+    if(res.data) SB_USER_ID = res.data.id;
+    console.log('[Supabase] 사용자 등록/갱신', SB_USER_ID);
+  });
   go('sessionSelect');
   setTimeout(function(){document.getElementById('pwaBanner').classList.add('show');},4000);
 }
@@ -978,19 +1046,44 @@ function toggleLike(id){
 
 function openLegoSheet(){
   document.getElementById('legoImgInp').value='';
-  document.getElementById('legoPreview').innerHTML='';
+  document.getElementById('legoPreviewImg').style.display='none';
+  document.getElementById('legoUploadPlaceholder').style.display='block';
+  document.getElementById('legoRemoveBtn').style.display='none';
+  document.getElementById('legoUploadArea').classList.remove('has-img');
+  document.getElementById('legoImgStatus').textContent='사진을 선택하면 미리보기가 표시됩니다';
   document.getElementById('legoComment').value='';
   legoPendingImg=null;
   document.getElementById('legoSheet').classList.add('open');
 }
+function triggerLegoUpload(){
+  document.getElementById('legoImgInp').click();
+}
 function previewLegoImg(inp){
   if(!inp.files||!inp.files[0])return;
+  var file=inp.files[0];
+  var sizeMB=(file.size/1024/1024).toFixed(1);
   var r=new FileReader();
   r.onload=function(e){
     legoPendingImg=e.target.result;
-    document.getElementById('legoPreview').innerHTML='<img src="'+e.target.result+'" style="width:100%;border-radius:7px;max-height:140px;object-fit:cover;">';
+    var img=document.getElementById('legoPreviewImg');
+    img.src=e.target.result;
+    img.style.display='block';
+    document.getElementById('legoUploadPlaceholder').style.display='none';
+    document.getElementById('legoRemoveBtn').style.display='flex';
+    document.getElementById('legoUploadArea').classList.add('has-img');
+    document.getElementById('legoImgStatus').textContent='✅ '+file.name+' ('+sizeMB+'MB) 업로드 완료';
   };
-  r.readAsDataURL(inp.files[0]);
+  r.readAsDataURL(file);
+}
+function removeLegoImg(e){
+  e.stopPropagation();
+  legoPendingImg=null;
+  document.getElementById('legoImgInp').value='';
+  document.getElementById('legoPreviewImg').style.display='none';
+  document.getElementById('legoUploadPlaceholder').style.display='block';
+  document.getElementById('legoRemoveBtn').style.display='none';
+  document.getElementById('legoUploadArea').classList.remove('has-img');
+  document.getElementById('legoImgStatus').textContent='사진을 선택하면 미리보기가 표시됩니다';
 }
 function submitLego(){
   var comment=document.getElementById('legoComment').value.trim();
@@ -1156,7 +1249,22 @@ function renderFreeSurveys(){
     var opt=e.target.closest('.sv-opt');
     if(opt){var svId=parseInt(opt.getAttribute('data-svid'));var optId=parseInt(opt.getAttribute('data-optid'));var sv=S.surveys.find(function(s){return s.id===svId;});if(sv&&!sv.answered){sv.selectedOpt=optId;renderFreeSurveys();}}
     var sub=e.target.closest('[data-svsubmit]');
-    if(sub){var svId=parseInt(sub.getAttribute('data-svsubmit'));var sv=S.surveys.find(function(s){return s.id===svId;});if(sv&&sv.selectedOpt){var o=sv.opts.find(function(x){return x.id===sv.selectedOpt;});if(o)o.count++;sv.answered=true;renderFreeSurveys();renderAdminSurveys();showCeleb('📊','응답 완료!','소중한 의견 감사해요!');}}
+    if(sub){var svId=parseInt(sub.getAttribute('data-svsubmit'));var sv=S.surveys.find(function(s){return s.id===svId;});if(sv&&sv.selectedOpt){var o=sv.opts.find(function(x){return x.id===sv.selectedOpt;});if(o)o.count++;sv.answered=true;renderFreeSurveys();renderAdminSurveys();showCeleb('📊','응답 완료!','소중한 의견 감사해요!');
+    // ★ Supabase: 설문 응답 저장 + option count 증가
+    var capturedSvId=svId, capturedOptId=sv.selectedOpt, capturedOptLabel=o?o.label:'';
+    sbSafe(async function(){
+      await sb.from('survey_answers').insert({
+        survey_id: capturedSvId, option_id: capturedOptId,
+        option_label: capturedOptLabel,
+        nickname: S.nick, team: S.team, user_id: SB_USER_ID
+      });
+      // option count 서버에도 반영
+      await sb.from('survey_options')
+        .update({count: o ? o.count : 1})
+        .eq('id', capturedOptId);
+      console.log('[Supabase] 설문 응답 저장', capturedSvId, capturedOptLabel);
+    });
+    }}
   });
 }
 
@@ -1237,8 +1345,24 @@ function completeQuestCount(qid){
   S.questDone[qid]=(S.questDone[qid]||0)+1;
   document.getElementById('questCertSheet').classList.remove('open');
   var cnt=S.questDone[qid];
-  if(cnt>=q.total){
-    S.score+=q.pt;
+  var isDone = cnt>=q.total;
+  if(isDone){ S.score+=q.pt; }
+  // ★ Supabase: 퀘스트 완료 기록 저장
+  sbSafe(async function(){
+    await sb.from('quest_completions').insert({
+      user_id: SB_USER_ID, nickname: S.nick, team: S.team,
+      quest_id: qid, quest_name: q.name, quest_cat: q.cat,
+      count_done: cnt, total_required: q.total,
+      points_earned: isDone ? q.pt : 0,
+      is_complete: isDone
+    });
+    if(isDone){
+      // 사용자 점수 갱신
+      await sb.from('users').update({score: S.score}).eq('id', SB_USER_ID);
+    }
+    console.log('[Supabase] 퀘스트 저장 완료', qid, cnt+'/'+q.total);
+  });
+  if(isDone){
     showCeleb('🎯','퀘스트 완료!',q.name+' 완료! +'+q.pt+'pt 획득!');
   } else {
     showCeleb('✅',cnt+'/'+q.total+' 완료!',q.total-cnt+'회 더 남았어요. 화이팅!');
@@ -1247,9 +1371,21 @@ function completeQuestCount(qid){
 }
 function completeQuestComment(qid){
   var q=QUESTS.find(function(x){return x.id===qid;});
+  var comment = document.getElementById('certComment') ? document.getElementById('certComment').value.trim() : '';
   S.questDone[qid]=(S.questDone[qid]||0)+1;
   document.getElementById('questCertSheet').classList.remove('open');
   S.score+=q.pt;
+  // ★ Supabase: 퀘스트 완료 + 소감 저장
+  sbSafe(async function(){
+    await sb.from('quest_completions').insert({
+      user_id: SB_USER_ID, nickname: S.nick, team: S.team,
+      quest_id: qid, quest_name: q.name, quest_cat: q.cat,
+      count_done: 1, total_required: q.total,
+      points_earned: q.pt, is_complete: true, comment: comment
+    });
+    await sb.from('users').update({score: S.score}).eq('id', SB_USER_ID);
+    console.log('[Supabase] 퀘스트(소감) 저장 완료', qid);
+  });
   showCeleb('🎯','퀘스트 완료!',q.name+' 완료! +'+q.pt+'pt 획득!');
   renderQuestList();updateQuestStats();
 }
@@ -1411,6 +1547,12 @@ document.getElementById('pwaInstallBtn').addEventListener('click',function(){
     requestAnimationFrame(draw);
   })();
 })();
+</script>
+<!-- ★ Supabase JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+// SDK 로드 완료 후 초기화
+window.addEventListener('load', function(){ initSupabase(); });
 </script>
 </body>
 </html>
