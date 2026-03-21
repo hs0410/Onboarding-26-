@@ -560,6 +560,8 @@ body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellips
     <button class="atab" onclick="switchAtab('aSv',this)">📊 설문</button>
     <button class="atab" onclick="switchAtab('aInq',this)">💬 문의</button>
     <button class="atab" onclick="switchAtab('aNf',this)">🔔 알림</button>
+    <button class="atab" onclick="switchAtab('aEx',this)">📥 내보내기</button>
+    <button class="atab" onclick="switchAtab('aRst',this)">🔄 초기화</button>
   </div>
   <div id="aN" class="atab-c active"><div class="sec-ttl">등록된 공지</div><div id="adminNList"></div><button class="admin-add" onclick="openNoticeSheet()">+ 공지 추가</button></div>
   <div id="aSv" class="atab-c"><div class="sec-ttl">설문 관리</div><div id="adminSvList"></div><button class="admin-add" onclick="openSvSheet()">+ 설문 추가</button></div>
@@ -575,6 +577,66 @@ body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellips
     <div class="sec-ttl">메시지</div>
     <textarea class="notif-ta" id="notifMsg" placeholder="알림 메시지를 입력하세요"></textarea>
     <button class="btn-p" onclick="sendNotif()">📨 알림 발송</button>
+  </div>
+
+  <!-- 📥 내보내기 탭 -->
+  <div id="aEx" class="atab-c">
+    <div class="sec-ttl">엑셀 내보내기</div>
+    <div style="display:flex;flex-direction:column;gap:10px;padding:4px 0 12px;">
+      <div style="background:var(--bg-card2);border-radius:var(--r-sm);padding:13px;border:1px solid var(--border);">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">👥 참여자 현황</div>
+        <div style="font-size:11px;color:var(--text-d);margin-bottom:10px;">닉네임 · 조 · 점수 · 아바타 · 가입일</div>
+        <button class="btn-p" onclick="adminExportExcel('users')" style="width:100%;padding:9px;">📥 참여자 데이터 다운로드</button>
+      </div>
+      <div style="background:var(--bg-card2);border-radius:var(--r-sm);padding:13px;border:1px solid var(--border);">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">🎯 퀘스트 완료 내역</div>
+        <div style="font-size:11px;color:var(--text-d);margin-bottom:10px;">미션명 · 카테고리 · 완료자 · 조 · 포인트 · 완료일</div>
+        <button class="btn-p" onclick="adminExportExcel('quests')" style="width:100%;padding:9px;">📥 퀘스트 데이터 다운로드</button>
+      </div>
+      <div style="background:var(--bg-card2);border-radius:var(--r-sm);padding:13px;border:1px solid var(--border);">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">📊 설문 · 교육평가 응답</div>
+        <div style="font-size:11px;color:var(--text-d);margin-bottom:10px;">설문 ID · 응답 내용 · 닉네임 · 조 · 응답일</div>
+        <button class="btn-p" onclick="adminExportExcel('surveys')" style="width:100%;padding:9px;">📥 설문 데이터 다운로드</button>
+      </div>
+      <div style="background:var(--bg-card2);border-radius:var(--r-sm);padding:13px;border:1px solid var(--border);">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">📋 전체 통합 리포트</div>
+        <div style="font-size:11px;color:var(--text-d);margin-bottom:10px;">참여자 · 퀘스트 · 설문 3개 시트 통합 엑셀</div>
+        <button onclick="adminExportExcel('all')" style="width:100%;padding:9px;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;">📥 통합 리포트 다운로드</button>
+      </div>
+    </div>
+    <div id="aExStatus" style="font-size:11px;color:var(--text-d);text-align:center;min-height:20px;"></div>
+  </div>
+
+  <!-- 🔄 초기화 탭 -->
+  <div id="aRst" class="atab-c">
+    <div class="sec-ttl">데이터 초기화</div>
+    <div style="background:#fff3cd;border-radius:var(--r-sm);padding:11px;border:1px solid #ffc107;margin-bottom:12px;">
+      <div style="font-size:11px;color:#856404;font-weight:600;">⚠️ 주의: 초기화된 데이터는 복구할 수 없습니다</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="background:var(--bg-card2);border-radius:var(--r-sm);padding:13px;border:1px solid var(--border);">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">👤 개별 사용자 초기화</div>
+        <div style="font-size:11px;color:var(--text-d);margin-bottom:8px;">특정 닉네임의 퀘스트·설문 데이터 삭제</div>
+        <input id="rstNickInp" placeholder="닉네임 입력" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg-card2);color:var(--text);font-size:12px;box-sizing:border-box;margin-bottom:8px;">
+        <button class="btn-p" onclick="adminResetUser()" style="width:100%;padding:9px;background:#f59e0b;border-color:#f59e0b;">🗑️ 해당 사용자 초기화</button>
+      </div>
+      <div style="background:var(--bg-card2);border-radius:var(--r-sm);padding:13px;border:1px solid var(--border);">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">🎯 퀘스트 완료 내역 전체 삭제</div>
+        <div style="font-size:11px;color:var(--text-d);margin-bottom:10px;">quest_completions 테이블 전체 삭제</div>
+        <button onclick="adminResetTable('quest_completions')" style="width:100%;padding:9px;background:#ef4444;color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;">🗑️ 퀘스트 기록 전체 삭제</button>
+      </div>
+      <div style="background:var(--bg-card2);border-radius:var(--r-sm);padding:13px;border:1px solid var(--border);">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">💬 소통 게시글 전체 삭제</div>
+        <div style="font-size:11px;color:var(--text-d);margin-bottom:10px;">talk_posts 테이블 전체 삭제</div>
+        <button onclick="adminResetTable('talk_posts')" style="width:100%;padding:9px;background:#ef4444;color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;">🗑️ 게시글 전체 삭제</button>
+      </div>
+      <div style="background:var(--bg-card2);border-radius:var(--r-sm);padding:13px;border:1px solid #ef4444;">
+        <div style="font-size:13px;font-weight:700;color:#ef4444;margin-bottom:4px;">💀 전체 초기화 (참여자 포함)</div>
+        <div style="font-size:11px;color:var(--text-d);margin-bottom:10px;">users + quest_completions + survey_answers + talk_posts 전체 삭제</div>
+        <button onclick="adminResetAll()" style="width:100%;padding:9px;background:#7f1d1d;color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;">💀 전체 데이터 초기화</button>
+      </div>
+    </div>
+    <div id="aRstStatus" style="font-size:11px;color:var(--text-d);text-align:center;margin-top:10px;min-height:20px;"></div>
   </div>
 </div>
 
@@ -857,6 +919,7 @@ function tryLogin(){
   if(code===ADMIN){
     S.nick=nick; S.team=team||'관리자';
     renderAdminNotices(); renderAdminSvs(); renderAdminInqs();
+    loadNoticesFromDB();
     go('admin'); return;
   }
   if(code!==PASS){ document.getElementById('lgErr').classList.add('show'); return; }
@@ -883,6 +946,7 @@ function tryLogin(){
     }
   });
   go('sessionSelect');
+  loadNoticesFromDB();
   setTimeout(()=>document.getElementById('pwaBanner').classList.add('show'),4000);
 }
 
@@ -1353,7 +1417,12 @@ function renderAdminNotices(){
   if(!S.notices.length){el.innerHTML='<p style="font-size:12px;color:var(--text-m);padding:9px">공지 없음</p>';return;}
   el.innerHTML=S.notices.map(n=>`<div class="admin-n-row"><div style="width:7px;height:7px;border-radius:50%;background:${cMap[n.type]};flex-shrink:0;margin-top:3px"></div><div class="admin-n-body"><h4>${esc(n.title)}</h4><p>${esc(n.body).substring(0,40)}…</p></div><button class="del-btn" onclick="delNotice(${n.id})">🗑</button></div>`).join('');
 }
-function delNotice(id){S.notices=S.notices.filter(n=>n.id!==id);renderAdminNotices();}
+function delNotice(id){
+  S.notices=S.notices.filter(n=>n.id!==id);
+  renderAdminNotices();
+  renderCommHome();
+  sbSafe(async()=>{ await sb.from('notices').delete().eq('id',id); });
+}
 let _ntype='event';
 function openNoticeSheet(){
   _ntype='event';
@@ -1368,9 +1437,14 @@ function saveNotice(){
   const body=document.getElementById('nBodyInp').value.trim();
   if(!title||!body){alert('제목과 내용을 입력해주세요.');return;}
   const d=new Date();
-  S.notices.unshift({id:Date.now(),type:_ntype,title,body,date:`${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`});
+  const dateStr=`${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`;
+  S.notices.unshift({id:Date.now(),type:_ntype,title,body,date:dateStr});
   document.getElementById('noticeSheet').classList.remove('open');
   renderAdminNotices();
+  renderCommHome();
+  sbSafe(async()=>{
+    await sb.from('notices').insert({type:_ntype,title,body,date:dateStr});
+  });
 }
 function renderAdminSvs(){
   const el=document.getElementById('adminSvList');
@@ -1479,9 +1553,123 @@ document.getElementById('pwaInstall').addEventListener('click',()=>{
   document.getElementById('pwaBanner').classList.remove('show');
 });
 
+// ═══ NOTICES DB 로드 ═══
+async function loadNoticesFromDB(){
+  if(!sb) return;
+  try{
+    const r = await sb.from('notices').select('*').order('created_at',{ascending:false}).limit(20);
+    if(r.data && r.data.length){
+      const dbNotices = r.data.map(n=>({id:n.id,type:n.type||'info',title:n.title,body:n.body,date:n.date||''}));
+      // 로컬 기본 공지는 유지하고 DB 공지 앞에 추가
+      const localIds = new Set(S.notices.map(n=>String(n.id)));
+      dbNotices.forEach(n=>{ if(!localIds.has(String(n.id))) S.notices.unshift(n); });
+      S.notices.sort((a,b)=>String(b.id).localeCompare(String(a.id)));
+      renderCommHome();
+    }
+  }catch(e){ console.warn('[notices]',e.message); }
+}
+
+// ═══ EXCEL 내보내기 ═══
+async function adminExportExcel(type){
+  const statusEl = document.getElementById('aExStatus');
+  if(!sb){ statusEl.textContent='⚠️ Supabase 연결 필요'; return; }
+  if(!window.XLSX){ statusEl.textContent='⚠️ XLSX 라이브러리 로드 중...'; return; }
+  statusEl.textContent='⏳ 데이터 불러오는 중...';
+  try{
+    const wb = window.XLSX.utils.book_new();
+    if(type==='users'||type==='all'){
+      const r = await sb.from('users').select('*').order('score',{ascending:false});
+      if(r.data){
+        const rows = r.data.map(u=>({'닉네임':u.nickname,'조':u.team,'점수':u.score,'아바타':u.avatar,'가입일':u.created_at?u.created_at.slice(0,10):''}));
+        const ws = window.XLSX.utils.json_to_sheet(rows);
+        ws['!cols']=[{wch:14},{wch:8},{wch:8},{wch:6},{wch:12}];
+        window.XLSX.utils.book_append_sheet(wb, ws, '참여자현황');
+      }
+    }
+    if(type==='quests'||type==='all'){
+      const r = await sb.from('quest_completions').select('*').order('completed_at',{ascending:false});
+      if(r.data){
+        const rows = r.data.map(q=>({'닉네임':q.nickname,'조':q.team,'카테고리':q.quest_cat,'미션명':q.quest_name,'완료여부':q.is_complete?'완료':'진행중','획득포인트':q.points_earned,'완료횟수':q.count_done,'완료일':q.completed_at?q.completed_at.slice(0,10):''}));
+        const ws = window.XLSX.utils.json_to_sheet(rows);
+        ws['!cols']=[{wch:14},{wch:8},{wch:8},{wch:20},{wch:10},{wch:10},{wch:8},{wch:12}];
+        window.XLSX.utils.book_append_sheet(wb, ws, '퀘스트완료내역');
+      }
+    }
+    if(type==='surveys'||type==='all'){
+      const r = await sb.from('survey_answers').select('*').order('answered_at',{ascending:false});
+      if(r.data){
+        const rows = r.data.map(s=>({'닉네임':s.nickname,'조':s.team,'설문ID':s.survey_id,'응답내용':s.option_label,'응답일':s.answered_at?s.answered_at.slice(0,10):''}));
+        const ws = window.XLSX.utils.json_to_sheet(rows);
+        ws['!cols']=[{wch:14},{wch:8},{wch:8},{wch:40},{wch:12}];
+        window.XLSX.utils.book_append_sheet(wb, ws, '설문응답');
+      }
+    }
+    if(wb.SheetNames.length===0){ statusEl.textContent='⚠️ 데이터 없음'; return; }
+    const today=new Date();
+    const fname=`온보딩_데이터_${today.getFullYear()}${String(today.getMonth()+1).padStart(2,'0')}${String(today.getDate()).padStart(2,'0')}.xlsx`;
+    window.XLSX.writeFile(wb, fname);
+    statusEl.textContent=`✅ ${fname} 다운로드 완료!`;
+    setTimeout(()=>statusEl.textContent='',4000);
+  }catch(e){
+    statusEl.textContent='❌ 오류: '+e.message;
+    console.error(e);
+  }
+}
+
+// ═══ 데이터 초기화 ═══
+async function adminResetUser(){
+  const nick = document.getElementById('rstNickInp').value.trim();
+  if(!nick){ alert('닉네임을 입력해주세요.'); return; }
+  if(!sb){ alert('Supabase 연결 필요'); return; }
+  if(!confirm(`"${nick}"의 퀘스트·설문 데이터를 삭제할까요?\n(users 테이블 기록은 유지됩니다)`)) return;
+  const statusEl = document.getElementById('aRstStatus');
+  statusEl.textContent='⏳ 처리 중...';
+  try{
+    await sb.from('quest_completions').delete().eq('nickname',nick);
+    await sb.from('survey_answers').delete().eq('nickname',nick);
+    await sb.from('users').update({score:0}).eq('nickname',nick);
+    statusEl.textContent=`✅ "${nick}" 초기화 완료`;
+    setTimeout(()=>statusEl.textContent='',4000);
+  }catch(e){ statusEl.textContent='❌ 오류: '+e.message; }
+}
+
+async function adminResetTable(tableName){
+  if(!sb){ alert('Supabase 연결 필요'); return; }
+  const labels={'quest_completions':'퀘스트 완료 내역','talk_posts':'소통 게시글'};
+  if(!confirm(`${labels[tableName]||tableName} 전체를 삭제할까요?\n복구 불가합니다.`)) return;
+  const statusEl = document.getElementById('aRstStatus');
+  statusEl.textContent='⏳ 처리 중...';
+  try{
+    await sb.from(tableName).delete().neq('id','00000000-0000-0000-0000-000000000000');
+    S.talkPosts=[];
+    if(tableName==='talk_posts') renderTalks();
+    statusEl.textContent=`✅ ${labels[tableName]||tableName} 삭제 완료`;
+    setTimeout(()=>statusEl.textContent='',4000);
+  }catch(e){ statusEl.textContent='❌ 오류: '+e.message; }
+}
+
+async function adminResetAll(){
+  if(!sb){ alert('Supabase 연결 필요'); return; }
+  if(!confirm('⚠️ 전체 데이터를 초기화합니다.\n참여자 정보, 퀘스트, 설문, 게시글이 모두 삭제됩니다.\n\n정말 진행하시겠습니까?')) return;
+  if(!confirm('마지막 확인입니다. 복구할 수 없습니다.\n전체 초기화를 실행할까요?')) return;
+  const statusEl = document.getElementById('aRstStatus');
+  statusEl.textContent='⏳ 전체 초기화 중...';
+  try{
+    const uuid0='00000000-0000-0000-0000-000000000000';
+    await sb.from('quest_completions').delete().neq('id',uuid0);
+    await sb.from('survey_answers').delete().neq('id',uuid0);
+    await sb.from('talk_posts').delete().neq('id',uuid0);
+    await sb.from('users').delete().neq('id',uuid0);
+    S.talkPosts=[]; renderTalks();
+    statusEl.textContent='✅ 전체 초기화 완료';
+    setTimeout(()=>statusEl.textContent='',5000);
+  }catch(e){ statusEl.textContent='❌ 오류: '+e.message; }
+}
+
 // ═══ SUPABASE SDK LOAD ═══
 window.addEventListener('load',initSb);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 </body>
 </html>
